@@ -10,3 +10,10 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth:sanctum');
+
+// not found route
+Route::fallback(function () {
+    return response()->json([
+        'message' => 'Route not found'
+    ], 404);
+});
