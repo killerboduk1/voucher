@@ -78,7 +78,7 @@ class AuthController extends Controller
                 'user' => $user,
                 'token' => $token
             ]);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return response()->json([
                 'message' => 'Failed to login'
             ], 500);
