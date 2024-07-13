@@ -24,7 +24,7 @@ class VoucherController extends Controller
             return Voucher::all();
         } catch (Exception) {
             return response()->json([
-                'error' => 'Failed to retrieve vouchers'
+                'message' => 'Failed to retrieve vouchers'
             ], 500);
         }
     }
@@ -38,7 +38,7 @@ class VoucherController extends Controller
     public function store(Request $request): JsonResponse
     {
         // Validate request
-        $fields = $request->validate([
+        $request->validate([
             'voucher' => 'required|alpha_num|min:5|max:5|unique:vouchers'
         ]);
 
@@ -46,20 +46,20 @@ class VoucherController extends Controller
             // check if user has more than 10 vouchers
             if (Voucher::count() >= 10) {
                 return response()->json([
-                    'error' => 'Maximum number of vouchers reached'
+                    'message' => 'Maximum number of vouchers reached'
                 ], 400);
             }
 
             // create voucher
             $voucher = Voucher::create([
-                'voucher' => $fields['voucher']
+                'voucher' => $request->voucher
             ]);
 
             // return created voucher
             return response()->json($voucher);
         } catch (Exception) {
             return response()->json([
-                'error' => 'Failed to store voucher'
+                'message' => 'Failed to store voucher'
             ], 500);
         }
     }
@@ -79,11 +79,11 @@ class VoucherController extends Controller
             return response()->json($voucher);
         } catch (ModelNotFoundException) {
             return response()->json([
-                'error' => 'Voucher not found'
+                'message' => 'Voucher not found'
             ], 404);
         } catch (Exception) {
             return response()->json([
-                'error' => 'Failed to view voucher'
+                'message' => 'Failed to view voucher'
             ], 500);
         }
     }
@@ -115,7 +115,7 @@ class VoucherController extends Controller
             return response()->json($voucher);
         } catch (Exception) {
             return response()->json([
-                'error' => 'Failed to update voucher'
+                'message' => 'Failed to update voucher'
             ], 500);
         }
     }
@@ -139,11 +139,11 @@ class VoucherController extends Controller
             ]);
         } catch (ModelNotFoundException) {
             return response()->json([
-                'error' => 'Voucher not found'
+                'message' => 'Voucher not found'
             ], 404);
         } catch (Exception) {
             return response()->json([
-                'error' => 'Failed to delete voucher'
+                'message' => 'Failed to delete voucher'
             ], 500);
         }
     }
