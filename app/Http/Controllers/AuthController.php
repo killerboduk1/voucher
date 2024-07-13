@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -23,24 +24,25 @@ class AuthController extends Controller
             'username' => 'required|max:50|unique:users',
             'first_name' => 'required|max:50',
             'email' => 'required|email|max:50|unique:users',
-            'password' => 'required|confirmed'
+            'password' => 'required|confirmed|min:8', // Ensure strong passwords
         ]);
 
         try {
             // create new user
             $user = User::create($fields);
 
-            // create token for user
+            // Create token for user
             $token = $user->createToken($user->username)->plainTextToken;
 
-            // return user and token
+            // Return user and token
             return response()->json([
                 'user' => $user,
-                'token' => $token
+                'token' => $token,
             ]);
-        } catch (Exception) {
+        } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed to register'
+                'message' => 'Failed to register',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -56,31 +58,32 @@ class AuthController extends Controller
         // Validate request
         $request->validate([
             'username' => 'required|exists:users,username',
-            'password' => 'required'
+            'password' => 'required',
         ]);
 
         try {
-            // check if user exists
+            // Check if user exists
             $user = User::where('username', $request->username)->first();
 
-            // check if password is correct
+            // Check if password is correct
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return response()->json([
-                    'message' => 'The provided credentials are incorrect.'
-                ]);
+                    'message' => 'The provided credentials are incorrect.',
+                ], 401);
             }
 
-            // create token for user
+            // Create token for user
             $token = $user->createToken($user->username)->plainTextToken;
 
-            // return user and token
+            // Return user and token
             return response()->json([
                 'user' => $user,
-                'token' => $token
+                'token' => $token,
             ]);
-        } catch (Exception) {
+        } catch (Exception $e) {
             return response()->json([
-                'message' => 'Failed to login'
+                'message' => 'Failed to login',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -94,16 +97,17 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         try {
-            // delete token
+            // Delete token
             $request->user()->tokens()->delete();
 
-            // return success message
+            // Return success message
             return response()->json([
-                'message' => 'Logged out successfully'
+                'message' => 'Logged out successfully',
             ]);
-        } catch (Exception) {
+        } catch (Exception $e) {
             return response()->json([
-                'error' => 'Failed to logout'
+                'message' => 'Failed to logout',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
