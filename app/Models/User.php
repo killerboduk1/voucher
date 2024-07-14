@@ -58,16 +58,22 @@ class User extends Authenticatable
         return $this->hasMany(Voucher::class);
     }
 
-    public function generateVoucher(): string
+    /**
+     * Create or Generate a new voucher
+     *
+     * @param $voucher
+     * @return Voucher
+     */
+    public function generateVoucher($voucher = null): Voucher
     {
         // Generate a random voucher code
-        $voucherCode = Str::random(5);
+        $voucherCode = $voucher ?? Str::random(5);
 
         // Create the voucher and associate it with the user
         $voucher = $this->vouchers()->create([
             'voucher' => $voucherCode,
         ]);
 
-        return $voucher->voucher;
+        return $voucher;
     }
 }

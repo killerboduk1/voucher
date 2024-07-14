@@ -43,7 +43,7 @@ class AuthController extends Controller
                 'title' => 'Welcome to Voucher App',
                 'message' => [
                     'user' => ucfirst($user->first_name),
-                    'voucher' => $voucher,
+                    'voucher' => $voucher->voucher,
                 ],
             ];
 

@@ -61,9 +61,7 @@ class VoucherController extends Controller implements HasMiddleware
             }
 
             // Create voucher
-            $voucher = $user->vouchers()->create([
-                'voucher' => $request->voucher,
-            ]);
+            $voucher = $user->generateVoucher($request->voucher);
 
             // Return created voucher
             return response()->json($voucher, 201);
