@@ -66,7 +66,7 @@ class VoucherController extends Controller implements HasMiddleware
             ]);
 
             // Return created voucher
-            return response()->json($voucher);
+            return response()->json($voucher, 201);
         } catch (Exception) {
             return response()->json([
                 'message' => 'Failed to store voucher',
