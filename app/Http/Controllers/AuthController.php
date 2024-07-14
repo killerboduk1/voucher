@@ -8,6 +8,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Mail\Welcome;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -33,6 +35,19 @@ class AuthController extends Controller
 
             // Create token for user
             $token = $user->createToken($user->username)->plainTextToken;
+
+            // Send welcome email
+            $voucher = $user->generateVoucher();
+
+            $data = [
+                'title' => 'Welcome to Voucher App',
+                'message' => [
+                    'user' => ucfirst($user->first_name),
+                    'voucher' => $voucher,
+                ],
+            ];
+
+            Mail::to($user->email)->send(new Welcome($data));
 
             // Return user and token
             return response()->json([
