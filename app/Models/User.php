@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -55,5 +56,18 @@ class User extends Authenticatable
     public function vouchers(): HasMany
     {
         return $this->hasMany(Voucher::class);
+    }
+
+    public function generateVoucher(): string
+    {
+        // Generate a random voucher code
+        $voucherCode = Str::random(5);
+
+        // Create the voucher and associate it with the user
+        $voucher = $this->vouchers()->create([
+            'voucher' => $voucherCode,
+        ]);
+
+        return $voucher->voucher;
     }
 }
