@@ -10,6 +10,10 @@ Features
 - Login
 - Logout
 
+## Test Case included 
+
+- tests/Feature/VoucherControllerTest.php
+- run `php artisan test`
 
 ## Installation 
 
